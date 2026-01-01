@@ -24,12 +24,14 @@ a:hover {
   color: #535bf2;
 }
 
+/* Don't force global centering — layout components should control positioning */
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  height: 100%;
+  width: 100%;
+  background-color: transparent;
 }
 
 h1 {
@@ -67,4 +69,126 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* Fallback / explicit styles for the GitHub sign-in button and theme toggle
+   in case Tailwind utilities are not applied or before they load. */
+.github-signin-button {
+  background-color: #24292F;
+  color: #fff;
+  border-radius: 0.75rem;
+  padding: 1rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.18);
+  border: 1px solid transparent;
+}
+.github-signin-button svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: inherit;
+}
+.github-signin-button:hover {
+  transform: translateY(-4px);
+}
+
+.theme-toggle {
+  background: rgba(255,255,255,0.28);
+  color: #111827;
+  border-radius: 9999px;
+  padding: 0.4rem;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.theme-toggle svg { width: 1.25rem; height: 1.25rem; }
+
+/* Dark-mode fallbacks when `.dark` is added to the root element */
+html.dark .github-signin-button {
+  background-color: #0b1116;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+}
+html.dark .theme-toggle {
+  background: rgba(0,0,0,0.28);
+  color: #f8fafc;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Ensure main container fills viewport and image side scales */
+.fill-screen-hero {
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* Ensure body/background responds to theme classes */
+html.dark body {
+  background-color: #000000 !important;
+  color: #e6edf3;
+}
+html.light body {
+  background-color: #ffffff !important;
+  color: #0f172a;
+}
+
+/* Ensure theme toggle has clear contrast in both modes */
+.theme-toggle {
+  transition: background-color 200ms, color 200ms, border-color 200ms;
+}
+
+/* Make sure the sign-in button remains visible even if global `button` styles apply */
+.github-signin-button {
+  background-color: #24292F;
+  color: #fff !important;
+}
+html.light .github-signin-button {
+  background-color: #24292F;
+  color: #fff !important;
+}
+
+/* Force common light backgrounds to dark variants when dark mode active */
+html.dark .bg-gray-50 { background-color: #03060a !important; }
+html.dark .bg-white { background-color: #03060a !important; }
+html.dark .bg-white\/10 { background-color: rgba(0,0,0,0.18) !important; }
+html.dark .bg-gray-100 { background-color: #071018 !important; }
+html.dark .from-transparent { background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0)) !important; }
+html.dark .to-gray-50\/20 { background-image: linear-gradient(to left, rgba(0,0,0,0), rgba(2,6,23,0.2)) !important; }
+
+/* Ensure overlays and cards have dark backgrounds */
+html.dark .backdrop-blur-sm, html.dark .backdrop-blur-md {
+  background-color: rgba(0,0,0,0.22) !important;
+}
+
+/* Make theme-toggle highly visible in dark mode */
+html.dark .theme-toggle {
+  background: rgba(255,255,255,0.04) !important;
+  color: #f8fafc !important;
+  border-color: rgba(255,255,255,0.06) !important;
+}
+
+/* Force primary text to be light/white in dark mode for readability */
+html.dark body,
+html.dark body p,
+html.dark body span,
+html.dark body h1,
+html.dark body h2,
+html.dark body h3,
+html.dark body h4,
+html.dark body h5,
+html.dark body h6,
+html.dark body a,
+html.dark body label,
+html.dark body li,
+html.dark body button,
+html.dark body input,
+html.dark body textarea {
+  color: #f8fafc !important;
+}
+
+/* Make secondary text slightly muted but still readable */
+html.dark .text-gray-600,
+html.dark .text-gray-500,
+html.dark .text-gray-400,
+html.dark .text-gray-300 {
+  color: #cbd5e1 !important;
 }
