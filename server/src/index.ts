@@ -1,19 +1,24 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
+import routes from './routes/index.js';
 
-const fastify = Fastify({
-  logger: true,
-});
+ const fastify = Fastify({
+  logger: false,
+ // trustProxy: true, //for production
+  requestIdHeader: 'x-request-id',
+  requestIdLogLabel: 'reqId',
+  disableRequestLogging: true,
+  bodyLimit: 1048576, // 1MB
+}); 
+
 
 // Register plugins
 fastify.register(cors, {
   origin: true, // Allow all origins for development
 });
 
-// Routes
-fastify.get('/', async (request, reply) => {
-  return { hello: 'world' };
-});
+fastify.register(routes)
+
 
 // Start server
 const start = async () => {
