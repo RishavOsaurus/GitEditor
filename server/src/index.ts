@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import routes from './routes/index.js';
+import { loadAllowedOrigins } from './config/allowedOrigins.js';
 
  const fastify = Fastify({
   logger: false,
@@ -11,10 +12,27 @@ import routes from './routes/index.js';
   bodyLimit: 1048576, // 1MB
 }); 
 
-
+const required = ['GITHUB_CLIENT_ID','GITHUB_CLIENT_SECRET'];
+const missing = required.filter(k => !process.env[k]);
+if (missing.length) {
+  console.error('Missing required env vars:', missing.join(', '));
+  process.exit(1);
+}
 // Register plugins
+const allowedOrigins = loadAllowedOrigins();
+
+if (allowedOrigins.length === 0) {
+  console.warn("Warning: No ALLOWED_ORIGINS set, CORS is disabled");
+}
+
 fastify.register(cors, {
-  origin: true, // Allow all origins for development
+  // origin can be a function to perform dynamic checks
+  origin: (origin, cb) => {
+    // allow requests with no origin (e.g. curl, server-to-server)
+    if (!origin) return cb(null, true);
+    const allowed = allowedOrigins.includes(origin);
+    cb(null, allowed);
+  }
 });
 
 fastify.register(routes)
