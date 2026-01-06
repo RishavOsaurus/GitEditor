@@ -69,11 +69,11 @@ const App: React.FC = () => {
 
   const handleGithubSignIn = () => {
     const clientId = (import.meta.env.VITE_GITHUB_CLIENT_ID as string) || ''
-    const redirectUri = (import.meta.env.VITE_GITHUB_REDIRECT_URI as string) || `${window.location.origin}`
+    const redirectUri = (import.meta.env.VITE_GITHUB_REDIRECT_URI as string) 
     const scope = 'read:user user:email'
     const state = genState()
     try { localStorage.setItem('oauth_state', state) } catch (err) { void err }
-
+    console.log(redirectUri)
     const params = new URLSearchParams({
       client_id: clientId,
       redirect_uri: redirectUri,
@@ -82,13 +82,48 @@ const App: React.FC = () => {
       allow_signup: 'true'
     })
 
-    window.location.href = `https://github.com/login/oauth/authorize?${params.toString()}`
+    const authUrl = `https://github.com/login/oauth/authorize?${params.toString()}`
+    try {
+      // Helpful debug: log redirect URI and full auth URL before navigating
+      // so developers can copy/paste and verify GitHub app settings.
+    
+      console.log('GitHub auth redirect_uri:', redirectUri)
+    
+      console.log('GitHub auth URL:', authUrl)
+    } catch (err) {
+      void err
+    }
+
+    window.location.href = authUrl
   }
 
   useEffect(() => {
     // Apply current theme on mount and whenever it changes
     applyTheme(theme)
   }, [theme])
+
+  useEffect(() => {
+    try {
+      const clientId = (import.meta.env.VITE_GITHUB_CLIENT_ID as string) || ''
+      const redirectUri = (import.meta.env.VITE_GITHUB_REDIRECT_URI as string)
+      const scope = 'read:user user:email'
+      const state = genState()
+      const params = new URLSearchParams({
+        client_id: clientId,
+        redirect_uri: redirectUri,
+        scope,
+        state,
+        allow_signup: 'true'
+      })
+      const authUrl = `https://github.com/login/oauth/authorize?${params.toString()}`
+      // eslint-disable-next-line no-console
+      console.log('Computed GitHub redirect_uri (on load):', redirectUri)
+      // eslint-disable-next-line no-console
+      console.log('Computed GitHub auth URL (on load):', authUrl)
+    } catch (err) {
+      void err
+    }
+  }, [])
 
   return (
     <div className="fill-screen-hero flex min-h-screen w-full transition-colors duration-500 bg-gray-50 dark:bg-gray-900">

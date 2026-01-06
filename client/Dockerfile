@@ -1,10 +1,22 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-COPY package*.json ./
-COPY . .
+# 1️⃣ Accept build-time arguments
+ARG VITE_API_URL
+ARG VITE_GITHUB_CLIENT_ID
+ARG VITE_GITHUB_REDIRECT_URI
 
+
+
+# 2️⃣ Expose them to Vite
+ENV VITE_API_URL=$VITE_API_URL
+ENV VITE_GITHUB_CLIENT_ID=$VITE_GITHUB_CLIENT_ID
+ENV VITE_GITHUB_REDIRECT_URI=$VITE_GITHUB_REDIRECT_URI
+
+COPY package*.json ./
 RUN npm install
+
+COPY . .
 RUN npm run build
 
 FROM nginx:stable-alpine AS runner

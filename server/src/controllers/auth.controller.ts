@@ -9,5 +9,11 @@ export class AuthController {
 
         reply.code(200).send({ message: testresult });
     }
+
+    async githubCallback(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+        const callbackResult = await this.service.handleGithubCallback();
+
+        reply.code(200).send(callbackResult);
+    }
 }
 

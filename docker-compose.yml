@@ -3,6 +3,8 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
+    env_file:
+      - ./server/.env
     ports:
       - "${SERVER_PORT}:3000"
     environment:
@@ -15,11 +17,15 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_GITHUB_CLIENT_ID: ${VITE_GITHUB_CLIENT_ID}
     ports:
       - "${CLIENT_PORT}:80"
     depends_on:
       - server
     restart: unless-stopped
+
 
   mongo:
     image: mongo:8.0

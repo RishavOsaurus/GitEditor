@@ -37,6 +37,23 @@ fastify.register(cors, {
 
 fastify.register(routes)
 
+const gracefulShutdown = async (signal: string) => {
+  console.log(`Received ${signal}, closing server...`);
+  try {
+    await fastify.close();
+    console.log('Server closed gracefully.');
+    process.exit(0);
+  } catch (err) {
+    console.error('Error during server shutdown:', err);
+    process.exit(1);
+  }
+}
+
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+
+
+
 
 // Start server
 const start = async () => {
@@ -49,5 +66,15 @@ const start = async () => {
     process.exit(1);
   }
 };
+
+process.on('uncaughtException', (error) => {
+  console.log('Uncaught Exception:', error);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
 
 start();
