@@ -70,6 +70,9 @@ web_modules/
 .env.*
 !.env.example
 
+# local env with secrets (created by assistant)
+.env.local
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache
