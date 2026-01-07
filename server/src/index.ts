@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import routes from './routes/index.js';
+import cookie from '@fastify/cookie';
 import { loadAllowedOrigins } from './config/allowedOrigins.js';
 
  const fastify = Fastify({
@@ -33,6 +34,11 @@ fastify.register(cors, {
     const allowed = allowedOrigins.includes(origin);
     cb(null, allowed);
   }
+});
+
+// register cookie plugin so we can set HttpOnly cookies
+fastify.register(cookie, {
+  secret: process.env.COOKIE_SECRET || 'dev-secret',
 });
 
 fastify.register(routes)

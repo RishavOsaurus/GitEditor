@@ -10,5 +10,9 @@ export default async function authRoutes(fastify: FastifyInstance): Promise<void
     app.get('/github/callback', {
       handler: authController.githubCallback.bind(authController)
     });
+
+    app.get('/start',{
+      handler: authController.githubStart.bind(authController)
+    });
   }, { prefix: '/api/v1/auth' });
 }
