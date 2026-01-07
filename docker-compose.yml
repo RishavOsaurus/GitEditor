@@ -20,6 +20,7 @@ services:
       args:
         VITE_API_URL: ${VITE_API_URL}
         VITE_GITHUB_CLIENT_ID: ${VITE_GITHUB_CLIENT_ID}
+        VITE_GITHUB_REDIRECT_URI: ${VITE_GITHUB_REDIRECT_URI}
     ports:
       - "${CLIENT_PORT}:80"
     depends_on:

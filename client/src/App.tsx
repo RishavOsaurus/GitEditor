@@ -116,9 +116,10 @@ const App: React.FC = () => {
         allow_signup: 'true'
       })
       const authUrl = `https://github.com/login/oauth/authorize?${params.toString()}`
-      // eslint-disable-next-line no-console
+     
+      console.log('Computed GitHub client_Id (on load):', clientId)
       console.log('Computed GitHub redirect_uri (on load):', redirectUri)
-      // eslint-disable-next-line no-console
+      
       console.log('Computed GitHub auth URL (on load):', authUrl)
     } catch (err) {
       void err
