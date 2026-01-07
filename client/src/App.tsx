@@ -56,45 +56,11 @@ const App: React.FC = () => {
     }
   }
 
-  const genState = (): string => {
-    try {
-      const arr = new Uint8Array(16)
-      window.crypto.getRandomValues(arr)
-      return Array.from(arr, (b) => b.toString(16).padStart(2, '0')).join('')
-    } catch {
-      // fallback
-      return Math.random().toString(36).slice(2)
-    }
-  }
 
   const handleGithubSignIn = () => {
-    const clientId = (import.meta.env.VITE_GITHUB_CLIENT_ID as string) || ''
-    const redirectUri = (import.meta.env.VITE_GITHUB_REDIRECT_URI as string) 
-    const scope = 'read:user user:email'
-    const state = genState()
-    try { localStorage.setItem('oauth_state', state) } catch (err) { void err }
-    console.log(redirectUri)
-    const params = new URLSearchParams({
-      client_id: clientId,
-      redirect_uri: redirectUri,
-      scope,
-      state,
-      allow_signup: 'true'
-    })
-
-    const authUrl = `https://github.com/login/oauth/authorize?${params.toString()}`
-    try {
-      // Helpful debug: log redirect URI and full auth URL before navigating
-      // so developers can copy/paste and verify GitHub app settings.
-    
-      console.log('GitHub auth redirect_uri:', redirectUri)
-    
-      console.log('GitHub auth URL:', authUrl)
-    } catch (err) {
-      void err
-    }
-
-    window.location.href = authUrl
+    const backend = (import.meta.env.VITE_BACKEND_URL as string) || ''
+    const startUrl = backend.replace(/\/$/, '') + '/api/v1/auth/start'
+    window.location.href = startUrl
   }
 
   useEffect(() => {
@@ -103,28 +69,11 @@ const App: React.FC = () => {
   }, [theme])
 
   useEffect(() => {
-    try {
-      const clientId = (import.meta.env.VITE_GITHUB_CLIENT_ID as string) || ''
-      const redirectUri = (import.meta.env.VITE_GITHUB_REDIRECT_URI as string)
-      const scope = 'read:user user:email'
-      const state = genState()
-      const params = new URLSearchParams({
-        client_id: clientId,
-        redirect_uri: redirectUri,
-        scope,
-        state,
-        allow_signup: 'true'
-      })
-      const authUrl = `https://github.com/login/oauth/authorize?${params.toString()}`
-     
-      console.log('Computed GitHub client_Id (on load):', clientId)
-      console.log('Computed GitHub redirect_uri (on load):', redirectUri)
-      
-      console.log('Computed GitHub auth URL (on load):', authUrl)
-    } catch (err) {
-      void err
-    }
+    const backend = (import.meta.env.VITE_BACKEND_URL as string) || ''
+    console.log('VITE_BACKEND_URL:', backend)
   }, [])
+
+
 
   return (
     <div className="fill-screen-hero flex min-h-screen w-full transition-colors duration-500 bg-gray-50 dark:bg-gray-900">
