@@ -1,5 +1,6 @@
 import crypto from 'crypto'
 import type { FastifyRequest } from 'fastify';
+import { fetchGithubAccessToken, fetchGithubUser } from '../utils/fetchGithubData.js';
 
 export class AuthService {
     constructor() {}
@@ -11,35 +12,11 @@ export class AuthService {
     async handleGithubCallback(request: FastifyRequest): Promise<any> {
         const code = (request.query as any).code;
 
-        // Exchange code for access token
-        const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                client_id: process.env.GITHUB_CLIENT_ID,
-                client_secret: process.env.GITHUB_CLIENT_SECRET,
-                code
-            })
-        });
+        // Exchange code for access token using helper
+        const accessToken = await fetchGithubAccessToken(code);
 
-        const tokenData = await tokenResponse.json() as { access_token?: string };
-
-        if (!tokenData.access_token) {
-            throw new Error('Failed to obtain access token from GitHub');
-        }
-
-        // Use the access token to fetch user data
-        const userResponse = await fetch('https://api.github.com/user', {
-            headers: {
-                'Authorization': `Bearer ${tokenData.access_token}`,
-                'Accept': 'application/json'
-            }
-        });
-
-        const userData = await userResponse.json();
+        // Fetch GitHub user using helper
+        const userData = await fetchGithubUser(accessToken);
 
         return { success: true, user: userData };
     }
@@ -48,7 +25,7 @@ export class AuthService {
         const state = crypto.randomBytes(32).toString('hex');
         const clientId = process.env.GITHUB_CLIENT_ID;
         const redirectUri = process.env.GITHUB_REDIRECT_URI;
-        const scope = 'read:user user:email';
+        const scope = 'read:user user:email repo';
 
         const params = new URLSearchParams({
             client_id: clientId || '',
