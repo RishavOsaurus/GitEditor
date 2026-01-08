@@ -11,13 +11,9 @@ export class AuthService {
 
     async handleGithubCallback(request: FastifyRequest): Promise<any> {
         const code = (request.query as any).code;
-
-        // Exchange code for access token using helper
         const accessToken = await fetchGithubAccessToken(code);
-
-        // Fetch GitHub user using helper
         const userData = await fetchGithubUser(accessToken);
-
+        
         return { success: true, user: userData };
     }
     
