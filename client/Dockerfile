@@ -22,6 +22,8 @@ RUN npm run build
 
 FROM nginx:stable-alpine AS runner
 COPY --from=builder /app/dist /usr/share/nginx/html
+# Copy custom nginx config to enable SPA fallback for client-side routing
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

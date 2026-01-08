@@ -18,10 +18,10 @@ export class AuthController {
             return sendErrorResponse(reply, 'Invalid OAuth state', 400);
         }
 
-        const callbackResult = await this.service.handleGithubCallback(request);
+        await this.service.handleGithubCallback(request);
 
-
-        sendSuccessResponse(reply, callbackResult);
+        const redirectUrl = process.env.GITHUB_DASHBOARD_URL || ""
+        return reply.redirect(redirectUrl);
     }
 
     async githubStart(request: FastifyRequest, reply: FastifyReply): Promise<void> {

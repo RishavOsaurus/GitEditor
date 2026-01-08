@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
+import Dashboard from './components/Dashboard'
 
 // Runtime check for Vite env vars — warn if important values are missing.
 const env = import.meta.env as Record<string, unknown>
@@ -16,8 +17,11 @@ if (!ghClientId) {
   console.warn('VITE_GITHUB_CLIENT_ID is not set. OAuth login will not work.')
 }
 
+const pathname = typeof window !== 'undefined' ? window.location.pathname : '/'
+const RootComponent = pathname === '/dashboard' ? Dashboard : App
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <RootComponent />
   </StrictMode>,
 )
