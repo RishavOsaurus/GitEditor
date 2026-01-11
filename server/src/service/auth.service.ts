@@ -1,9 +1,9 @@
 import crypto from 'crypto'
 import type { FastifyRequest } from 'fastify';
 import { fetchGithubAccessToken, fetchGithubUser } from '../utils/fetchGithubData.js';
-
+import { UserRepository } from '../repositories/user.repository.js';
 export class AuthService {
-    constructor() {}
+
 
     async testService() :Promise<string> {
         return "Service is working";
@@ -13,8 +13,8 @@ export class AuthService {
         const code = (request.query as any).code;
         const accessToken = await fetchGithubAccessToken(code);
         const userData = await fetchGithubUser(accessToken);
-        
-        return { success: true, user: userData };
+        userData.redirectToDashboard = "/dashboard";
+        return {userData}
     }
     
     async handleGithubStart(): Promise<any> {
